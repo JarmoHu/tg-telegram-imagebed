@@ -1,5 +1,5 @@
 # ==================== 阶段1: 构建前端 ====================
-FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 # 设置工作目录
 WORKDIR /frontend
