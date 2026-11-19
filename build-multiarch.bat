@@ -3,7 +3,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 
 cd /d "%~dp0"
 
-set IMAGE_NAME=lost4/tg-telegram-imagebed
+set IMAGE_NAME=jarmohu/tg-telegram-imagebed
 set TAG=latest
 set PLATFORMS=linux/amd64,linux/arm64
 set BUILDER_NAME=multiarch-builder

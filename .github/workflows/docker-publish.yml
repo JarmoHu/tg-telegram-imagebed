@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: lost4/tg-telegram-imagebed
+  IMAGE_NAME: jarmohu/tg-telegram-imagebed
   RELEASE_ASSET_NAME: tg-imagebed-release.zip
   RELEASE_SHA_NAME: tg-imagebed-release.zip.sha256
 
@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.14'
 
       - name: Run Python tests
         run: |

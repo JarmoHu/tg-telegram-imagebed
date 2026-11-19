@@ -5,7 +5,7 @@ set -e
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 # 配置
-IMAGE_NAME="lost4/tg-telegram-imagebed"
+IMAGE_NAME="jarmohu/tg-telegram-imagebed"
 TAG="latest"
 PLATFORMS="linux/amd64,linux/arm64"
 BUILDER_NAME="multiarch-builder"
