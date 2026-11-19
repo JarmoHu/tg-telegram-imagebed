@@ -49,12 +49,13 @@ const asBytesFromMb = (valueMb: string): number | undefined => {
 export const useAdminImages = () => {
   const notification = useNotification()
   const runtimeConfig = useRuntimeConfig()
-  const { getImages, deleteImages, clearCache } = useImageApi()
+  const { getImages, deleteImages, probeCdnCache, clearCache } = useImageApi()
 
   const loading = ref(false)
   const refreshing = ref(false)
   const deleting = ref(false)
 
+  const probingIds = ref<string[]>([])
   const images = ref<AdminImageItem[]>([])
   const selectedIds = ref<string[]>([])
 
@@ -533,6 +534,50 @@ export const useAdminImages = () => {
     }
   }
 
+  const probeImageCdn = async (id: string) => {
+    const targetId = String(id || '').trim()
+    if (!targetId || probingIds.value.includes(targetId)) return
+
+    probingIds.value.push(targetId)
+    try {
+      const response = await probeCdnCache(targetId)
+      const result = response?.data?.find((item: any) => item.encrypted_id === targetId)
+        || response?.data?.[0]
+
+      if (!response?.success) {
+        throw new Error(response?.error || '实时探测失败')
+      }
+
+      const isCached = Boolean(result?.cached)
+      const cacheStatus = String(result?.cf_cache_status || '').trim()
+
+      const imageIndex = images.value.findIndex(item => item.id === targetId)
+      if (imageIndex >= 0) {
+        images.value[imageIndex].cached = isCached
+        images.value[imageIndex].cdn_cached = isCached
+        if (isCached) {
+          images.value[imageIndex].cdn_cache_time = new Date().toISOString()
+        }
+      }
+
+      if (selectedImage.value?.id === targetId) {
+        selectedImage.value.cached = isCached
+        selectedImage.value.cdn_cached = isCached
+      }
+
+      if (isCached) {
+        notification.success('CDN 已缓存', cacheStatus || '探测结果为已缓存')
+      } else {
+        notification.info('CDN 未缓存', cacheStatus || result?.error || '探测结果为未缓存')
+      }
+    } catch (error: any) {
+      notification.error('探测失败', error?.data?.error || error?.message || '无法探测 CDN 缓存状态')
+      console.error('探测 CDN 缓存失败:', error)
+    } finally {
+      probingIds.value = probingIds.value.filter(item => item !== targetId)
+    }
+  }
+
   const clearCacheAction = async () => {
     try {
       await clearCache()
@@ -554,6 +599,7 @@ export const useAdminImages = () => {
     loading,
     refreshing,
     deleting,
+    probingIds,
     images,
     selectedIds,
     selectedCount,
@@ -620,6 +666,7 @@ export const useAdminImages = () => {
     openDeleteForSelection,
     closeDeleteModal,
     confirmDelete,
+    probeImageCdn,
     clearCacheAction,
   }
 }

@@ -25,6 +25,14 @@
           <div class="mt-2 flex items-center gap-1 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
             <UButton icon="heroicons:eye" color="white" size="xs" @click="$emit('view-detail', image)" />
             <UButton icon="heroicons:link" color="white" size="xs" @click="$emit('copy-url', image.url)" />
+            <UButton
+              icon="heroicons:magnifying-glass-circle"
+              :color="image.cached ? 'green' : 'blue'"
+              size="xs"
+              :loading="props.probingIds.includes(image.id)"
+              :label="props.probingIds.includes(image.id) ? '探测中' : '探测 CDN'"
+              @click="$emit('probe-cdn', image.id)"
+            />
             <UButton icon="heroicons:trash" color="red" size="xs" @click="$emit('delete', image.id)" />
           </div>
         </div>
@@ -37,15 +45,19 @@
 import type { AdminImageItem } from '~/types/api'
 import MasonryGrid from '~/components/MasonryGrid.vue'
 
-defineProps<{
+const props = withDefaults(defineProps<{
   images: AdminImageItem[]
   selectedIds: string[]
-}>()
+  probingIds?: string[]
+}>(), {
+  probingIds: () => [],
+})
 
 defineEmits<{
   'toggle-select': [id: string]
   'view-detail': [image: AdminImageItem]
   'copy-url': [url: string]
+  'probe-cdn': [id: string]
   delete: [id: string]
 }>()
 

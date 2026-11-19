@@ -69,6 +69,15 @@
             <div class="flex items-center justify-end gap-1">
               <UButton icon="heroicons:eye" color="gray" variant="ghost" size="xs" @click="$emit('view-detail', image)" />
               <UButton icon="heroicons:link" color="gray" variant="ghost" size="xs" @click="$emit('copy-url', image.url)" />
+              <UButton
+                icon="heroicons:magnifying-glass-circle"
+                :color="image.cached ? 'green' : 'blue'"
+                variant="ghost"
+                size="xs"
+                :loading="props.probingIds.includes(image.id)"
+                :label="props.probingIds.includes(image.id) ? '探测中' : '探测 CDN'"
+                @click="$emit('probe-cdn', image.id)"
+              />
               <UButton icon="heroicons:trash" color="red" variant="ghost" size="xs" @click="$emit('delete', image.id)" />
             </div>
           </td>
@@ -81,15 +90,19 @@
 <script setup lang="ts">
 import type { AdminImageItem } from '~/types/api'
 
-defineProps<{
+const props = withDefaults(defineProps<{
   images: AdminImageItem[]
   selectedIds: string[]
-}>()
+  probingIds?: string[]
+}>(), {
+  probingIds: () => [],
+})
 
 defineEmits<{
   'toggle-select': [id: string]
   'view-detail': [image: AdminImageItem]
   'copy-url': [url: string]
+  'probe-cdn': [id: string]
   delete: [id: string]
 }>()
 

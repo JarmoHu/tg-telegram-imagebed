@@ -142,7 +142,7 @@
     </div>
 
     <footer class="shrink-0 border-t border-stone-200 bg-white/95 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] dark:border-neutral-700 dark:bg-neutral-900/95 sm:px-4">
-      <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div class="grid grid-cols-2 gap-2 sm:grid-cols-5">
         <UButton
           color="blue"
           variant="soft"
@@ -162,6 +162,17 @@
           @click="$emit('download')"
         >
           下载图片
+        </UButton>
+        <UButton
+          :color="image?.cached ? 'green' : 'blue'"
+          variant="soft"
+          icon="heroicons:magnifying-glass-circle"
+          :disabled="!image"
+          :loading="probing"
+          block
+          @click="$emit('probe-cdn')"
+        >
+          {{ probing ? '探测中' : '探测 CDN' }}
         </UButton>
         <UButton
           color="red"
@@ -188,9 +199,11 @@ withDefaults(defineProps<{
   image: AdminImageItem | null
   hasPrev?: boolean
   hasNext?: boolean
+  probing?: boolean
 }>(), {
   hasPrev: false,
   hasNext: false,
+  probing: false,
 })
 
 defineEmits<{
@@ -199,6 +212,7 @@ defineEmits<{
   prev: []
   next: []
   download: []
+  'probe-cdn': []
   delete: []
 }>()
 

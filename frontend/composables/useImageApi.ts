@@ -64,6 +64,16 @@ export const useImageApi = () => {
     }
   }
 
+  // 实时探测指定图片的 CDN 缓存状态
+  const probeCdnCache = async (id: string) => {
+    const response = await $apiFetch<any>('/api/admin/cdn/probe', {
+      method: 'POST',
+      body: { encrypted_ids: [id] },
+      credentials: 'include'
+    })
+    return response
+  }
+
   // 清理缓存
   const clearCache = async () => {
     try {
@@ -108,6 +118,7 @@ export const useImageApi = () => {
     getAdminDashboardActivity,
     getImages,
     deleteImages,
+    probeCdnCache,
     clearCache
   }
 }

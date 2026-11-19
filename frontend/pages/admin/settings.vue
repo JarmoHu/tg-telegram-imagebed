@@ -474,6 +474,15 @@
         <div v-else class="space-y-6">
           <!-- 基础配置 -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <UFormGroup label="CDN 域名">
+              <UInput v-model="settings.cloudflare_cdn_domain" placeholder="tgimg.example.com" />
+              <template #hint>
+                <span class="text-xs text-stone-500 dark:text-stone-400">
+                  只填写域名，不要包含 https:// 或 /path
+                </span>
+              </template>
+            </UFormGroup>
+
             <UFormGroup label="Zone ID">
               <UInput v-model="settings.cloudflare_zone_id" placeholder="Cloudflare Zone ID" />
             </UFormGroup>

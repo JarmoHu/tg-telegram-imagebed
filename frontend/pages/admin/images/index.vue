@@ -71,9 +71,11 @@
         v-else-if="viewMode === 'list'"
         :images="images"
         :selected-ids="selectedIds"
+        :probing-ids="probingIds"
         @toggle-select="toggleSelect"
         @view-detail="openDetail"
         @copy-url="copyImageUrl"
+        @probe-cdn="probeImageCdn"
         @delete="openDeleteForSingle"
       />
 
@@ -81,9 +83,11 @@
         v-else-if="viewMode === 'grid'"
         :images="images"
         :selected-ids="selectedIds"
+        :probing-ids="probingIds"
         @toggle-select="toggleSelect"
         @view-detail="openDetail"
         @copy-url="copyImageUrl"
+        @probe-cdn="probeImageCdn"
         @delete="openDeleteForSingle"
       />
 
@@ -91,9 +95,11 @@
         v-else
         :images="images"
         :selected-ids="selectedIds"
+        :probing-ids="probingIds"
         @toggle-select="toggleSelect"
         @view-detail="openDetail"
         @copy-url="copyImageUrl"
+        @probe-cdn="probeImageCdn"
         @delete="openDeleteForSingle"
       />
 
@@ -130,11 +136,13 @@
           :image="selectedImage"
           :has-prev="hasPrevDetail"
           :has-next="hasNextDetail"
+          :probing="Boolean(selectedImage && probingIds.includes(selectedImage.id))"
           @close="closeDetail"
           @copy="copyImageUrl(selectedImage?.url)"
           @prev="goPrevDetail"
           @next="goNextDetail"
           @download="downloadImage(selectedImage)"
+          @probe-cdn="probeImageCdn(selectedImage?.id || '')"
           @delete="deleteCurrentDetailImage"
         />
       </div>
@@ -213,6 +221,7 @@ const {
   loading,
   refreshing,
   deleting,
+  probingIds,
   images,
   selectedIds,
   selectedCount,
@@ -269,6 +278,7 @@ const {
   openDeleteForSelection,
   closeDeleteModal,
   confirmDelete,
+  probeImageCdn,
   clearCacheAction,
 } = useAdminImages()
 
